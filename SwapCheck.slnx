@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="SwapCheck.API/SwapCheck.API.csproj" />
+  <Project Path="SwapCheck.Application/SwapCheck.Application.csproj" />
+  <Project Path="SwapCheck.Domain/SwapCheck.Domain.csproj" />
+  <Project Path="SwapCheck.Infrastructure/SwapCheck.Infrastructure.csproj" />
+</Solution>

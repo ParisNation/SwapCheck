@@ -1,0 +1,33 @@
+namespace SwapCheck.Domain.Enums
+{
+    public enum MountPattern
+    {
+        FrontLongitudinal,
+        FrontTransverse,
+        MidLongitudinal,
+        MidTransverse,
+        RearLongitudinal,
+        RearTransverse,
+        ThreePointMount,
+        FourPointMount,
+        SubframeCradleMount,
+        CrossmemberMount,
+        MotorPlateMount,
+        AdapterPlateMount,
+        FactoryOEMMount,
+        CustomFabricatedMount,
+        RubberIsolatedMount,
+        HydraulicMount,
+        PolyurethaneMount,
+        SolidMount,
+        BodyOnFrameMounting,
+        UnibodySubframeMounting,
+        TubularChassisMounting,
+        SpaceframeMounting,
+        InlineEnginePattern,
+        VEnginePattern,
+        FlatBoxerPattern,
+        RotaryPattern,
+        ElectricMotorMountPattern
+    }
+}
