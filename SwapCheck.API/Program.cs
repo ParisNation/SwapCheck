@@ -1,5 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using SwapCheck.Application.Queries.GetVehicles;
+using SwapCheck.Application.Interfaces;
+using SwapCheck.Infrastructure.Repositories;
 using SwapCheck.Infrastructure;
+using SwapCheck.Infrastructure.Data;
+using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,8 +14,15 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<SwapCheckDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
-var app = builder.Build();
+builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 
+builder.Services.AddMediatR(cfg =>
+cfg.RegisterServicesFromAssemblies(typeof(GetVehiclesQuery).Assembly));
+
+builder.Services.AddControllers();
+builder.Services.AddScoped<SwapCheckSeeder>();
+
+var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -18,29 +30,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.MapControllers();
 
-var summaries = new[]
+using (var scope = app.Services.CreateScope())
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    var seeder = scope.ServiceProvider.GetRequiredService<SwapCheckSeeder>();
+    await seeder.SeedAsync();
+}
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
