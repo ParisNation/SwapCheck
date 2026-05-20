@@ -24,10 +24,14 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddAutoMapper(typeof(SwapCheck.Application.Mappings.MappingProfile).Assembly);
+
 builder.Services.AddDbContext<SwapCheckDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+
+builder.Services.AddScoped<ISwapCompatibilityRepository, SwapCompatibilityRepository>();
 
 builder.Services.AddMediatR(cfg =>
 cfg.RegisterServicesFromAssemblies(typeof(GetVehiclesQuery).Assembly));

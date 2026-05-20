@@ -14,6 +14,7 @@ namespace SwapCheck.Infrastructure.Data
 
         public async Task SeedAsync()
         {
+
             if(_context.Vehicles.Any())
             {
                 return;
@@ -44,7 +45,72 @@ namespace SwapCheck.Infrastructure.Data
 
             _context.Engines.AddRange(engines);
             await _context.SaveChangesAsync();
+            
+            if(_context.SwapCompatibilities.Any())
+            {
+                return;
+            }
+            
+            var landRover = _context.Vehicles.First(v => v.Make == "Land Rover" );
+            var chevrolet = _context.Vehicles.First(v => v.Make == "Chevrolet" );
+            var ford = _context.Vehicles.First(v => v.Make == "Ford" );
+            var dodge = _context.Vehicles.First(v => v.Make == "Dodge" );
 
-        }
+            var roverV8 = _context.Engines.First(e => e.EngineName == "Rover V8" );
+            var ls3 = _context.Engines.First(e => e.EngineName == "Chevrolet LS3" );
+            var coyote = _context.Engines.First(e => e.EngineName == "Ford Coyote" );
+            var hemi = _context.Engines.First(e => e.EngineName == "Dodge HEMI" );
+
+            var compatibilities = new List<SwapCompatibility>
+            {
+                new SwapCompatibility
+                {
+                    Id = Guid.NewGuid(),
+                    VehicleId = landRover.Id,
+                    EngineId = roverV8.Id,
+                    IsCompatible = true,
+                    DifficultyLevel = SwapDifficulty.DirectBolt,
+                    Notes = "Factory fit - original egine"
+                },
+                new SwapCompatibility
+                {
+                    Id = Guid.NewGuid(),
+                    VehicleId = landRover.Id,
+                    EngineId = ls3.Id,
+                    IsCompatible = false,
+                    DifficultyLevel = SwapDifficulty.CustomFabrication,
+                    Notes = "Requires custom mounts and adapter plate"
+                },
+                new SwapCompatibility
+                {
+                    Id = Guid.NewGuid(),
+                    VehicleId = chevrolet.Id,
+                    EngineId = ls3.Id,
+                    IsCompatible = true,
+                    DifficultyLevel = SwapDifficulty.DirectBolt,
+                    Notes = "Factory fit - original engine"
+                },
+                new SwapCompatibility
+                {
+                    Id = Guid.NewGuid(),
+                    VehicleId = ford.Id,
+                    EngineId = coyote.Id,
+                    IsCompatible = true,
+                    DifficultyLevel = SwapDifficulty.DirectBolt,
+                    Notes = "Factory fit - original engine"
+                },
+                new SwapCompatibility
+                {
+                    Id = Guid.NewGuid(),
+                    VehicleId = dodge.Id,
+                    EngineId = hemi.Id,
+                    IsCompatible = true,
+                    DifficultyLevel = SwapDifficulty.DirectBolt,
+                    Notes = "Factory fit - original engine"
+                }
+            };
+            _context.SwapCompatibilities.AddRange(compatibilities);
+            await _context.SaveChangesAsync();
+        } 
     }
 }
