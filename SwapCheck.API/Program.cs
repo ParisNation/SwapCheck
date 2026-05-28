@@ -4,7 +4,9 @@ using SwapCheck.Application.Interfaces;
 using SwapCheck.Infrastructure.Repositories;
 using SwapCheck.Infrastructure;
 using SwapCheck.Infrastructure.Data;
+using SwapCheck.Application.Validators;
 using MediatR;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +26,14 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(
+            new System.Text.Json.Serialization.JsonStringEnumConverter()
+        );
+    });
+
 builder.Services.AddAutoMapper(typeof(SwapCheck.Application.Mappings.MappingProfile).Assembly);
 
 builder.Services.AddDbContext<SwapCheckDbContext>(
@@ -32,11 +42,9 @@ builder.Services.AddDbContext<SwapCheckDbContext>(
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 
 builder.Services.AddScoped<ISwapCompatibilityRepository, SwapCompatibilityRepository>();
-
+builder.Services.AddValidatorsFromAssembly(typeof(GetCompatibleEnginesValidator).Assembly);
 builder.Services.AddMediatR(cfg =>
 cfg.RegisterServicesFromAssemblies(typeof(GetVehiclesQuery).Assembly));
-
-builder.Services.AddControllers();
 builder.Services.AddScoped<SwapCheckSeeder>();
 
 var app = builder.Build();
