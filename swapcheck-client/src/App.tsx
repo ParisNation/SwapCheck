@@ -8,6 +8,7 @@ interface Vehicle {
 }
 
 interface Engine {
+  id: string
   engineName: string
   manufacturer: string
   mountPattern: number
@@ -25,6 +26,8 @@ interface CompatibilityResult {
 function App() {
 
   const [vehicles, setVehicles] = useState<Vehicle[]>([])
+  const [engines, setEngines] = useState<Engine[]>([])
+  const [selectedEngineId, setSelectedEngineId] = useState<string>("")
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>("")
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [compatibilityResult, setCompatibilityResult] = useState<CompatibilityResult[]>([])
@@ -39,6 +42,18 @@ function App() {
         setIsLoading(false)
       })
   }, [])
+
+  useEffect(() => {
+    setIsLoading(true)
+    fetch('http://localhost:5069/api/engines')
+    .then(res => res.json())
+    .then(data => {
+      console.log(data)
+      setEngines(data)
+      setIsLoading(false)
+    })
+  }, [])
+  
 
   function handleCheckCompatibility() {
     fetch(`http://localhost:5069/api/compatibility/${selectedVehicleId}`)
@@ -62,6 +77,19 @@ function App() {
           {vehicles.map(vehicle => (
             <option key={vehicle.id} value={vehicle.id}>
               {vehicle.year} {vehicle.make} {vehicle.model}
+            </option>
+          ))}
+        </select>
+
+        <label className="block text-sm text-gray-400 mb-2">Select a Engine</label>
+        <select
+          className="w-full bg-gray-800 text-white rounded-lg p-3 border border-gray-700"
+          onChange={e => setSelectedEngineId(e.target.value)}
+        >
+          <option value="">-- Select a Engine --</option>
+          {engines.map(engine => (
+            <option key={engine.id} value={engine.id}>
+             {engine.manufacturer} {engine.engineName}
             </option>
           ))}
         </select>

@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SwapCheck.Application.Queries.GetCompatibilityByVehicleAndEngine;
 using SwapCheck.Application.Queries.GetCompatibleEngines;
 
 namespace SwapCheck.API.Controllers
@@ -20,6 +21,14 @@ namespace SwapCheck.API.Controllers
         public async Task<IActionResult> GetCompatibleEngine(Guid vehicleId)
         {
             var results = await _mediator.Send(new GetCompatibleEnginesQuery{VehicleId = vehicleId});
+            return Ok(results);
+        }
+
+        [HttpGet("{vehicleId}/{engineId}")]
+        public async Task<IActionResult> GetCompatibleVehiclesAndEngines(Guid vehicleId, Guid engineId)
+        {
+            var results = await _mediator.Send(new GetCompatibilityByVehicleAndEngineQuery{VehicleId = vehicleId, EngineId = engineId});
+            if (results == null) return NotFound("No compatibility record found for this combination.");
             return Ok(results);
         }
     }

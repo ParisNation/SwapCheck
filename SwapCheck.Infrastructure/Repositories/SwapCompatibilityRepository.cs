@@ -21,5 +21,12 @@ namespace SwapCheck.Infrastructure.Repositories
             .ToListAsync();
 
         }
+
+        public async Task<SwapCompatibility?> GetByVehicleAndEngineAsync(Guid vehicleId, Guid engineId)
+        {
+            return await _context.SwapCompatibilities
+                .Include(s => s.Engine)
+                .FirstOrDefaultAsync(s => s.VehicleId == vehicleId && s.EngineId == engineId);
+        }
     }
 }
