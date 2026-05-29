@@ -70,7 +70,7 @@ namespace SwapCheck.Infrastructure.Data
                     EngineId = roverV8.Id,
                     IsCompatible = true,
                     DifficultyLevel = SwapDifficulty.DirectBolt,
-                    Notes = "Factory fit - original egine"
+                    Notes = "Factory fit - original engine"
                 },
                 new SwapCompatibility
                 {

@@ -40,7 +40,7 @@ builder.Services.AddDbContext<SwapCheckDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
-
+builder.Services.AddScoped<IEngineRepository, EngineRepository>();
 builder.Services.AddScoped<ISwapCompatibilityRepository, SwapCompatibilityRepository>();
 builder.Services.AddValidatorsFromAssembly(typeof(GetCompatibleEnginesValidator).Assembly);
 builder.Services.AddMediatR(cfg =>
