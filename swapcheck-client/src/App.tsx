@@ -30,7 +30,8 @@ function App() {
   const [selectedEngineId, setSelectedEngineId] = useState<string>("")
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>("")
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [compatibilityResult, setCompatibilityResult] = useState<CompatibilityResult[]>([])
+  const [compatibilityResult, setCompatibilityResult] = useState<CompatibilityResult | null>(null)
+  const [notFound, setNotFound] = useState<boolean>(false)
 
   useEffect(() => {
     setIsLoading(true)
@@ -56,9 +57,20 @@ function App() {
   
 
   function handleCheckCompatibility() {
-    fetch(`http://localhost:5069/api/compatibility/${selectedVehicleId}`)
+    setIsLoading(true)
+    setNotFound(false)
+    setCompatibilityResult(null)
+    fetch(`http://localhost:5069/api/compatibility/${selectedVehicleId}/${selectedEngineId}`)
       .then(res => res.json())
-      .then(data => setCompatibilityResult(data))
+      .then(data => {
+        if (data === null) {
+          setNotFound(true)
+          setCompatibilityResult(null)
+        } else {
+          setCompatibilityResult(data)
+        }
+        setIsLoading(false)
+      })
   }
 
   return (
@@ -102,22 +114,30 @@ function App() {
         </button>
       </div>
 
-      {compatibilityResult.map(result => (
-        <div
-          key={result.id}
-          className={`rounded-xl p-6 mb-4 border ${result.isCompatible ? 'bg-green-950 border-green-700' : 'bg-red-950 border-red-700'}`}
-        >
-          <h3 className="text-xl font-bold mb-2">{result.engine.engineName}</h3>
-          <p className={result.isCompatible ? 'text-green-400' : 'text-red-400'}>
-            {result.isCompatible ? '✅ Compatible' : '❌ Not Compatible'}
+      
+        {isLoading && (
+          <p className="text-gray-400">Checking compatibility...</p>
+        )}
+
+        {notFound && (
+          <div className="rounded-xl p-6 bg-gray-900 border-gray-700 text-center">
+          <p className="text-gray-400">No compatibility record found for this combination.</p>
+          </div>
+        )}
+
+        {compatibilityResult && (
+          <div className={`rounded-xl p-6 mb-4 border ${compatibilityResult.isCompatible ? 'bg-green-950 border-green-700' : 'bg-red-950 border-red-700'}`}>
+          <h3 className="text-xl font-bold mb-2">{compatibilityResult.engine.engineName}</h3>
+          <p className={compatibilityResult.isCompatible ? 'text-green-400' : 'text-red-400'}>
+          {compatibilityResult.isCompatible ? 'Compatible' : 'Not Compatible'}
           </p>
-          <p className="text-gray-400 mt-1">Difficulty: {result.difficultyLevel}</p>
-          <p className="text-gray-500 mt-1 text-sm">{result.notes}</p>
-        </div>
-      ))}
+          <p className="text-gray-400 mt-1">Difficulty: {compatibilityResult.difficultyLevel}</p>
+          <p className="text-gray-500 mt-1 text-sm">{compatibilityResult.notes}</p>
+          </div>
+        )}
     </div>
   </div>
-)
+  )
 }
 
 export default App;
