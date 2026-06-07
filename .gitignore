@@ -430,6 +430,7 @@ FodyWeavers.xsd
 
 # Local settings
 appsettings.Development.json
+SwapCheck.API/appsettings.json
 
 # Node
 node_modules/

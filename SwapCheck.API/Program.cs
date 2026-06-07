@@ -7,6 +7,7 @@ using SwapCheck.Infrastructure.Data;
 using SwapCheck.Application.Validators;
 using MediatR;
 using FluentValidation;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +38,7 @@ builder.Services.AddControllers()
 builder.Services.AddAutoMapper(typeof(SwapCheck.Application.Mappings.MappingProfile).Assembly);
 
 builder.Services.AddDbContext<SwapCheckDbContext>(
-    options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+    options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 builder.Services.AddScoped<IEngineRepository, EngineRepository>();
